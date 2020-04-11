@@ -1,112 +1,114 @@
 # Developer Notes
 
+This is a developer's note for those develop and release this library.
+
 ## Package repository
 
-The packages of this library are primarily hosted in the author's Bintray repository.
- 
-https://bintray.com/nyakamoto/maven/java-os-detector
+The packages of this library are primarily hosted in the Sonatype OSS repository.
 
-For users who want to use this  without manually specifying the above repository,
-the packages are linked to JCenter.
+https://oss.sonatype.org/service/local/repositories/releases/content/com/github/tnakamot/java-os-detector/
 
-https://bintray.com/bintray/jcenter
+which is synchronized to Maven Central
+
+https://repo1.maven.org/maven2/com/github/tnakamot/java-os-detector/
 
 ## How to release
 
-This sbt project uses [sbt-git](https://github.com/sbt/sbt-git) to determine the
-version of this project. To release a new version of this plugin, follow the
-instructions below.
+This sbt project uses
+ 
+ * [sbt-pgp](https://github.com/sbt/sbt-pgp) to sign the artifacts.
+ * [sbt-sonatype](https://github.com/xerial/sbt-sonatype) to upload products.
+ * [sbt-release](https://github.com/sbt/sbt-release) to automate release procedure.
 
-### 1. Clean repository
+Release procedure is fully automated, but you need some one-time preparation on your 
+development environment before releasing. The
 
-Make sure that you do not have any unstaged changes in your git repository. Run
+### PGP Key Registration
 
-    $ git status
+If you have not created your PGP key pair (public and private), create one with
+this command.
 
-If you have any unstaged changes, commit or clean them.
-
-### 2. Check the latest version
-
-Run
-
-    $ git tag
+    $ gpg --gen-key
     
-to see what versions have been released so far and determine the version of the
-next release.
+It interactively asks your information. Enter as instructed and finally enter
+passphrase. If the key pair is successfully created, you can see the information
+about the created keys as shown below
 
-### 3. Add tag
-
-Once you determine the version, run the command below to add a new tag.
-
-    $ git tag -a "vx.y.z" -m "New release version x.y.z"
-
-### 4. Create a repository on Bintray
-
-(Skip this step if you already have "sbt-plugins" repository on Bintray.)
-
-This project uses [sbt-bintray](https://github.com/sbt/sbt-bintray) plugin to publish
-the packages to [Bintray](https://bintray.com/). If you have not created your account
-on Bintray, create a free one.
-
-If you have not created "maven" repository on your Bintray account yet, please 
-first create it. When you create the repository, make sure that the name is
-"maven" and type is "Maven".
-
-### 5. Configure your Bintray credentials
-
-(Skip this step if you have already configured your Bintray credentials.)
-
-If have not configured your Bintray credentials in your computer, first you need
-to get your API Key. Follow the steps below to do so.  
-
-* Go to [your Bintray profile page](https://bintray.com/profile/edit).
-* Click "API Key" in the left menu.
-* If you are asked, re-enter your password of your Bintray account and press "Submit" button.
-* Press "Show" link to show your API Key.
+    $ gpg --list-keys
     
-[sbt-bintray](https://github.com/sbt/sbt-bintray) plugin reads credential information
-from `~/.bintray/.credentials`. If you have not created this file, create it with 
-the following contents
-
-    realm = Bintray API Realm
-    host = api.bintray.com
-    user = (your bintray user name)
-    password = (your API Key)
+    /home/username/.gnupg/pubring.kbx
+    ----------------------------------
+    pub   rsa3072 yyyy-mm-dd [SC] [expires: yyyy-mm-dd]
+          1234567890ABCDEF1234567890ABCDEF12345678
+    uid           [ultimate] Your Name <your@email.address>
+    sub   rsa3072 yyyy-mm-dd [E] [expires: yyyy-mm-dd]
     
-Set your API Key to "password" field, not the password you enter when you login Bintray.
+Now register your key to sks-keyservers.net.
 
-Finally, in this project directory, run
-   
-    $ sbt bintrayWhoami
+    $ gpg --keyserver hkp://pool.sks-keyservers.net --send-keys 1234567890ABCDEF1234567890ABCDEF12345678
     
-to see if your Bintray user name is correctly loaded from the credential settings.
+### Create your Sonatype account
 
-### 6. Publish to Bintray
+If you do not have your Sonatype account (JIRA account), create one following
+the instruction below.
 
-Once the credential settings are completed, run the commands below in this project
-directory to publish your new version.
+https://central.sonatype.org/pages/ossrh-guide.html#create-a-ticket-with-sonatype
 
-    $ sbt publish
-    $ sbt bintrayRelease
+### Get User Token
+
+Once you create your account, login [Nexus Repository Manager](https://oss.sonatype.org/)
+with the newly created account (the same name and password as JIRA).
+
+Once logged in, click your account name on the top right corner and select "Profile".
+In the top middle of the Profile page, click the dropdown box showing "Summary" and 
+select "User Token". Then, press "Access User Token" button to show your username 
+and password of the user token.
+
+### Set up credentials
+
+Create `~/.sbt/1.0/sonatype.sbt` with the contents below
+
+    credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
     
-If these commands are successful, you should be able to see the new version of 
-this package in your repository. You can see your new package here
+Then, create `~/.sbt/sonatype_credentials` with the contents below
 
-     https://bintray.com/(your_account_name)/maven/java-os-detector
+    realm=Sonatype Nexus Repository Manager
+    host=oss.sonatype.org
+    user=<your username>
+    password=<your password>
+
+Here the user and password must be the same one as the user token obtained in
+the previous section.
+
+### Release 
+
+The steps above are one-time thing. Once you have done in your development
+environment, you do not have to repeat for every release.
+
+Before you launch sbt shell, you need to set `GPG_TTY` environmental variable
+as advised [here](https://github.com/sbt/sbt-pgp/issues/138#issuecomment-407519040).  
+
+    $ export GPG_TTY=$(tty)
     
-and
+Then, run the command below in the project directory.
 
-     https://dl.bintray.com/(your_account_name)/maven
+    $ sbt release 
 
-### 7. Push git tag to github
-   
-Do not forget to push the newly created tag to github.
+It asks you to enter the version number to release and passphrase of the GPG
+key. Then, it finally publishes the released version to Maven Central and pushes
+the version tags to github. This process typically takes several minutes. Be
+patient. Once done, check if the packages are uploaded to Maven Central.
 
-    $ git push  
-    $ git push --tags
+https://repo1.maven.org/maven2/com/github/tnakamot/java-os-detector/
 
-       
+It typically takes several minutes after `sbt release` command is completed
+until the packages appear in Maven Central. Again, be patient.
+
+Also confirm that your release tags are pushed to github.
+
+https://github.com/tnakamot/java-os-detector/releases
+      
 ## References
 
-* [Publishing an SBT Project onto Bintray: an Example](http://queirozf.com/entries/publishing-an-sbt-project-onto-bintray-an-example)
-* [sbt-git-versioning](https://github.com/rallyhealth/sbt-git-versioning): This project does not use this sbt-git-versioning plugin, but its documentation includes useful information about how [sbt-git](https://github.com/sbt/sbt-git) determines the version.
+* [Sonatype setup](https://www.scala-sbt.org/release/docs/Using-Sonatype.html)
+
