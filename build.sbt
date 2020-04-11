@@ -12,6 +12,7 @@ lazy val root = (project in file("."))
     crossPaths   := false, // Do not use Scala version in artifacts.
 
     // For sbt-sonatype plugin to publish this package to Maven Central.
+    publishTo := sonatypePublishToBundle.value,
     sonatypeProfileName := "com.github.tnakamot",
     publishMavenStyle := true,
     licenses     += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")),
