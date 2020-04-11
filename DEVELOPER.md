@@ -101,8 +101,10 @@ and
 ### 7. Push git tag to github
    
 Do not forget to push the newly created tag to github.
-  
+
+    $ git push  
     $ git push --tags
+
        
 ## References
 
