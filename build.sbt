@@ -1,9 +1,9 @@
 import xerial.sbt.Sonatype._
+import ReleaseTransformations._
 
 Global / onChangedBuildSource := IgnoreSourceChanges
 
 lazy val root = (project in file("."))
-  .enablePlugins(GitVersioning)
   .settings(
     name         := "java-os-detector",
     organization := "com.github.tnakamot",
@@ -25,5 +25,22 @@ lazy val root = (project in file("."))
         url   = url("https://github.com/tnakamot"),
       )
     ),
-    homepage := Some(url("https://github.com/tnakamot/java-os-detector"))
+    homepage := Some(url("https://github.com/tnakamot/java-os-detector")),
+
+    // Customized release process
+    releaseCrossBuild := false,
+    releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      runClean,
+      runTest,
+      setReleaseVersion,
+      commitReleaseVersion,
+      tagRelease,
+      releaseStepCommandAndRemaining("publishSigned"),
+      releaseStepCommand("sonatypeBundleRelease"),
+      setNextVersion,
+      commitNextVersion,
+      pushChanges
+    )
   )
