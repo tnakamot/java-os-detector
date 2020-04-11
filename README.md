@@ -19,8 +19,7 @@ to explain the benefit of this library.
 ## Install
 
 The packages of this library are distributed through 
-[JCenter](https://bintray.com/bintray/jcenter). You do not have to add additional
-repository to your build system.
+[JCenter](https://bintray.com/bintray/jcenter).
 
 ### Maven
 
@@ -29,7 +28,7 @@ Add the following lines to your pom.xml.
     <dependency>
       <groupId>com.github.tnakamot</groupId>
       <artifactId>java-os-detector</artifactId>
-      <version>0.1.0</version>
+      <version>0.1.1</version>
       <type>pom</type>
     </dependency>
 
@@ -38,7 +37,7 @@ Add the following lines to your pom.xml.
 To use this library in your sbt project, add the following sbt setting
  (e.g. in build.sbt). 
 
-    libraryDependencies += "com.github.tnakamot" % "java-os-detector" % "0.1.0",
+    libraryDependencies += "com.github.tnakamot" % "java-os-detector" % "0.1.1",
 
 ## Usage
 
