@@ -189,8 +189,10 @@ public class Detector {
         return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
     }
 
+    /*
     public static void main(String args[]) {
         System.out.println("Normalized OS name          : " + getNormalizedOSName());
         System.out.println("Normalized architecture name: " + getNormalizedArchitectureName());
     }
+    */
 }
