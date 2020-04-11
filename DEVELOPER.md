@@ -97,7 +97,13 @@ this package in your repository. You can see your new package here
 and
 
      https://dl.bintray.com/(your_account_name)/maven
+
+### 7. Push git tag to github
    
+Do not forget to push the newly created tag to github.
+  
+    $ git push --tags
+       
 ## References
 
 * [Publishing an SBT Project onto Bintray: an Example](http://queirozf.com/entries/publishing-an-sbt-project-onto-bintray-an-example)
