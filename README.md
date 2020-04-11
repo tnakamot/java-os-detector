@@ -18,21 +18,27 @@ to explain the benefit of this library.
 
 ## Install
 
-The package is currently hosted in Bintray on the author's account.
+The packages of this library are distributed through 
+[JCenter](https://bintray.com/bintray/jcenter). You do not have to add additional
+repository to your build system.
 
-https://bintray.com/nyakamoto/maven/java-os-detector
+### Maven
 
-or 
+Add the following lines to your pom.xml.
 
-https://dl.bintray.com/nyakamoto/maven/com/github/tnakamot/java-os-detector/
+    <dependency>
+      <groupId>com.github.tnakamot</groupId>
+      <artifactId>java-os-detector</artifactId>
+      <version>0.1.0</version>
+      <type>pom</type>
+    </dependency>
 
 ### sbt
 
-To use this library in your sbt project, add the above repository to the
-resolvers, and then add library to the dependencies as shown below. 
+To use this library in your sbt project, add the following sbt setting
+ (e.g. in build.sbt). 
 
-    resolvers += Resolver.bintrayRepo("nyakamoto", "maven"),
-    libraryDependencies += "com.github.tnakamot" % "java-os-detector" % "0.0.2",
+    libraryDependencies += "com.github.tnakamot" % "java-os-detector" % "0.1.0",
 
 ## Usage
 
@@ -50,7 +56,3 @@ They return a String of the normalized OS and architecture name respectively.
 To know what actually the normalized OS and architecture names are, see
 the description about `os.detected.name` and `os.detected.arch` properties
 of [os-maven-plugin](https://github.com/trustin/os-maven-plugin).
-
-## TODO
-
-* add this library to JCenter
